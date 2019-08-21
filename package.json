@@ -1,0 +1,26 @@
+{
+  "name": "swipeable-bottom-sheet",
+  "version": "1.0.0",
+  "description": "React native swipeable bottom sheet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kp2506/swipeable-bottom-sheet.git"
+  },
+  "keywords": [
+    "react",
+    "native",
+    "swipeable",
+    "bottomsheet",
+    "draggable"
+  ],
+  "author": "Krunal Panchal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kp2506/swipeable-bottom-sheet/issues"
+  },
+  "homepage": "https://github.com/kp2506/swipeable-bottom-sheet#readme"
+}
