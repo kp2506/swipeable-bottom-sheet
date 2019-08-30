@@ -1,5 +1,15 @@
 import React from 'react';
-import { StyleSheet, ScrollView, TouchableHighlight, Animated, Dimensions, PanResponder, Easing } from 'react-native';
+import {
+	StyleSheet,
+	ScrollView,
+	TouchableHighlight,
+	Animated,
+	Dimensions,
+	PanResponder,
+	Easing,
+	Text,
+	TouchableWithoutFeedback
+} from 'react-native';
 import { Bar } from './Bar';
 import { Close } from './Close';
 
@@ -7,15 +17,14 @@ import PropTypes from 'prop-types';
 
 const FULL_HEIGHT = Dimensions.get('window').height;
 const FULL_WIDTH = Dimensions.get('window').width;
-const CONTAINER_HEIGHT = FULL_HEIGHT - 100;
+const CONTAINER_HEIGHT = FULL_HEIGHT;
 
 export default class SwipeablePanel extends React.Component {
 	static propTypes = {
 		isActive: PropTypes.bool.isRequired,
 		onClose: PropTypes.func,
 		fullWidth: PropTypes.bool,
-		onPressCloseButton: PropTypes.func,
-		noBackgroundOpacity: PropTypes.bool
+		onPressCloseButton: PropTypes.func
 	};
 
 	constructor(props) {
@@ -49,7 +58,7 @@ export default class SwipeablePanel extends React.Component {
 				if (this.state.status == 2) {
 					if (0 < absDistance && absDistance < 100) this._animateToLargePanel();
 					else if (100 < absDistance && absDistance < CONTAINER_HEIGHT - 200) this._animateToSmallPanel();
-					else if (CONTAINER_HEIGHT - 200 < absDistance) this._animateClosingAndOnCloseProp();
+					else this._animateClosingAndOnCloseProp();
 				} else {
 					if (distance < -100) this._animateClosingAndOnCloseProp(false);
 					else if (distance > 0 && distance > 50) this._animateToLargePanel();
@@ -59,7 +68,7 @@ export default class SwipeablePanel extends React.Component {
 		});
 	}
 
-	componentDidMount = () => {};
+	componentDidMount = () => { };
 
 	componentDidUpdate(prevProps, prevState) {
 		if (prevProps.isActive != this.props.isActive) {
@@ -162,42 +171,39 @@ export default class SwipeablePanel extends React.Component {
 
 	render() {
 		const { showComponent, opacity } = this.state;
-		const { noBackgroundOpacity } = this.props;
 
 		return showComponent ? (
-			<Animated.View
-				style={[
-					SwipeablePanelStyles.background,
-					{ opacity, backgroundColor: noBackgroundOpacity ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,0.5)' }
-				]}
-			>
-				<Animated.View
-					style={[
-						SwipeablePanelStyles.container,
-						{ width: this.props.fullWidth ? FULL_WIDTH : FULL_WIDTH - 50 },
-						{ transform: this.pan.getTranslateTransform() }
-					]}
-					{...this._panResponder.panHandlers}
-				>
-					<Bar />
-					{this.props.onPressCloseButton && <Close onPress={this.onPressCloseButton} />}
-					<ScrollView contentContainerStyle={{ width: '100%' }}>
-						{this.state.canScroll ? (
-							<TouchableHighlight>
-								<React.Fragment>{this.props.children}</React.Fragment>
-							</TouchableHighlight>
-						) : (
-							this.props.children
-						)}
-					</ScrollView>
+			<TouchableWithoutFeedback onPress={this.onPressCloseButton}>
+				<Animated.View style={[SwipeablePanelStyles.background, { opacity: opacity }]}>
+					<Animated.View
+						style={[
+							SwipeablePanelStyles.container,
+							{ width: this.props.fullWidth ? FULL_WIDTH : FULL_WIDTH - 50 },
+							{ transform: this.pan.getTranslateTransform() }
+						]}
+						{...this._panResponder.panHandlers}
+					>
+						<Bar />
+						{this.props.onPressCloseButton && <Close onPress={this.onPressCloseButton} />}
+						<ScrollView contentContainerStyle={{ width: '100%' }}>
+							{this.state.canScroll ? (
+								<TouchableHighlight>
+									<React.Fragment>{this.props.children}</React.Fragment>
+								</TouchableHighlight>
+							) : (
+									this.props.children
+								)}
+						</ScrollView>
+					</Animated.View>
 				</Animated.View>
-			</Animated.View>
+			</TouchableWithoutFeedback>
 		) : null;
 	}
 }
 
 const SwipeablePanelStyles = StyleSheet.create({
 	background: {
+		backgroundColor: 'rgba(0,0,0,0.5)',
 		position: 'absolute',
 		zIndex: 1,
 		justifyContent: 'center',
@@ -209,7 +215,7 @@ const SwipeablePanelStyles = StyleSheet.create({
 		position: 'absolute',
 		height: CONTAINER_HEIGHT,
 		width: FULL_WIDTH - 50,
-		transform: [ { translateY: FULL_HEIGHT - 100 } ],
+		transform: [{ translateY: FULL_HEIGHT - 100 }],
 		display: 'flex',
 		flexDirection: 'column',
 		backgroundColor: 'white',
@@ -223,6 +229,6 @@ const SwipeablePanelStyles = StyleSheet.create({
 		shadowOpacity: 0.18,
 		shadowRadius: 1.0,
 		elevation: 1,
-		zIndex: 2
+		zIndex: 3
 	}
 });
